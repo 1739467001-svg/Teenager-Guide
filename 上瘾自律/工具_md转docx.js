@@ -11,6 +11,7 @@ const OUT = process.argv[3];
 
 const CN = "Microsoft YaHei";      // 正文中文
 const MONO = "Consolas";
+const MONO_CJK = "NSimSun";   // 真·中日韩等宽，ASCII 方框图里混中文才不会错位
 const INK = "1A1F27";
 const MUTED = "5B6472";
 const ACCENT = "1D4ED8";
@@ -22,8 +23,15 @@ const SHADE2 = "FFF1F4";
 // page width available for tables (A4 = 11906 dxa, margins 1080 each) -> ~9746
 const TW = 9600;
 
+// Bold can straddle a line break (common inside blockquotes). runs() works
+// line-by-line, so carry an unterminated ** over to the next line.
+let BOLD_CARRY = false;
+
 function runs(text, opts = {}) {
   // split on **bold**, `code`
+  if (BOLD_CARRY) text = '**' + text;
+  const odd = (text.match(/\*\*/g) || []).length % 2 === 1;
+  if (odd) { text = text + '**'; BOLD_CARRY = true; } else if (!/\*\*/.test(text)) { /* keep */ } else { BOLD_CARRY = false; }
   const out = [];
   const re = /(\*\*[^*]+\*\*|`[^`]+`)/g;
   let last = 0, m;
@@ -153,7 +161,7 @@ while (i < lines.length) {
     while (i < lines.length && !/^\s*```/.test(lines[i])) { buf.push(lines[i]); i++; }
     i++;
     buf.forEach((ln, k) => kids.push(new Paragraph({
-      children: [new TextRun({ text: ln.replace(/\t/g, '  ') || ' ', font: MONO, size: 16, color: INK })],
+      children: [new TextRun({ text: ln.replace(/\t/g, '  ') || ' ', font: MONO_CJK, size: 16, color: INK })],
       spacing: { before: k === 0 ? 100 : 0, after: k === buf.length - 1 ? 140 : 0, line: 220 },
       shading: { type: ShadingType.CLEAR, fill: SHADE, color: 'auto' },
       indent: { left: 180, right: 180 },
