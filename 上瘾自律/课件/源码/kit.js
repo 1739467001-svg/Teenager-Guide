@@ -4,18 +4,20 @@ const IMG = p => path.join(__dirname, 'img', p);
 
 const C = {
   ink: '141110',
-  cream: 'FBF7F0',
+  cream: 'FFF9EF',
   white: 'FFFFFF',
-  red: 'E63329',
+  red: 'F03A21',
   redDeep: 'B01705',
-  orange: 'FF7A1A',
-  gold: 'FFC93C',
-  muted: '7A736C',
-  line: 'E2D9CC',
+  orange: 'FF8A1E',
+  gold: 'FFD24A',
+  muted: '9A7550',
+  line: 'F0DCBC',
   card: 'FFFFFF',
-  inkSoft: '3A332E',
+  inkSoft: '4A3B2C',
 };
 const F = 'Microsoft YaHei';
+// 亮底白字用：每次新建，绝不复用同一个 shadow 对象
+const sh = (o = 0.55, b = 9) => ({ type: 'outer', color: '5A1A00', blur: b, offset: 2, angle: 90, opacity: o });
 const W = 13.3, H = 7.5;
 
 const BG = {
@@ -31,7 +33,7 @@ function kicker(s, text, { dark = false } = {}) {
   s.addText(text, {
     x: 0.88, y: 0.40, w: 9.0, h: 0.3, isTextBox: true, margin: 0,
     fontFace: F, fontSize: 12, bold: true, charSpacing: 2,
-    color: dark ? 'F2E4D2' : C.muted, valign: 'middle',
+    color: dark ? 'FFF0D4' : C.muted, valign: 'middle',
   });
 }
 
@@ -48,16 +50,16 @@ function slideTitle(pres, { title, sub, meta = [], notes }) {
   s.background = { ...BG.title };
   s.addText(title, {
     x: 0.9, y: 1.55, w: 11.5, h: 1.9, isTextBox: true, margin: 0,
-    fontFace: F, fontSize: 76, bold: true, color: C.white, charSpacing: 6,
+    fontFace: F, fontSize: 76, bold: true, color: C.white, charSpacing: 6, shadow: sh(0.5, 14),
   });
   if (sub) s.addText(sub, {
     x: 0.95, y: 3.55, w: 11.0, h: 0.62, isTextBox: true, margin: 0,
-    fontFace: F, fontSize: 23, color: C.gold, bold: true,
+    fontFace: F, fontSize: 23, color: 'FFFFFF', bold: true, shadow: sh(0.55, 8),
   });
   meta.forEach((m, i) => {
     s.addText(m, {
       x: 0.95 + i * 3.1, y: 4.45, w: 3.0, h: 0.4, isTextBox: true, margin: 0,
-      fontFace: F, fontSize: 13, color: 'E8D9C6',
+      fontFace: F, fontSize: 13.5, color: 'FFF6E8', bold: true, shadow: sh(0.6, 6),
     });
   });
   if (notes) s.addNotes(notes);
@@ -69,15 +71,15 @@ function slideSection(pres, { kicker: k, title, sub, notes }) {
   s.background = { ...BG.day };
   s.addText(k, {
     x: 0.9, y: 1.35, w: 10, h: 0.44, isTextBox: true, margin: 0,
-    fontFace: F, fontSize: 15, bold: true, color: C.gold, charSpacing: 4,
+    fontFace: F, fontSize: 15, bold: true, color: 'FFFFFF', charSpacing: 4, shadow: sh(0.6, 6),
   });
   s.addText(title, {
     x: 0.88, y: 1.95, w: 11.5, h: 1.5, isTextBox: true, margin: 0,
-    fontFace: F, fontSize: 58, bold: true, color: C.white, charSpacing: 3,
+    fontFace: F, fontSize: 58, bold: true, color: C.white, charSpacing: 3, shadow: sh(0.5, 12),
   });
   if (sub) s.addText(sub, {
     x: 0.95, y: 3.55, w: 10.8, h: 0.9, isTextBox: true, margin: 0,
-    fontFace: F, fontSize: 19, color: 'F0E2D0',
+    fontFace: F, fontSize: 19, color: 'FFFFFF', bold: true, shadow: sh(0.6, 7),
   });
   if (notes) s.addNotes(notes);
   return s;
@@ -91,11 +93,11 @@ function slideStatement(pres, { kicker: k, lines, foot, notes, size = 46 }) {
   const arr = Array.isArray(lines) ? lines : [lines];
   s.addText(arr.map((t, i) => ({ text: t, options: { breakLine: i < arr.length - 1 } })), {
     x: 0.9, y: 2.0, w: 11.5, h: 2.7, isTextBox: true, margin: 0,
-    fontFace: F, fontSize: size, bold: true, color: C.white, lineSpacing: size * 1.5,
+    fontFace: F, fontSize: size, bold: true, color: C.white, lineSpacing: size * 1.5, shadow: sh(0.42, 12),
   });
   if (foot) s.addText(foot, {
     x: 0.95, y: 4.95, w: 11.3, h: 1.55, isTextBox: true, margin: 0,
-    fontFace: F, fontSize: 16, color: 'FFE3C9', lineSpacing: 25, valign: 'top',
+    fontFace: F, fontSize: 16.5, color: 'FFFFFF', lineSpacing: 26, valign: 'top', shadow: sh(0.5, 7),
   });
   if (notes) s.addNotes(notes);
   return s;
@@ -161,7 +163,7 @@ function cards(s, items, { y = 2.5, cols = 3, h = 2.5, accent = C.red } = {}) {
       x, y: yy, w, h, rectRadius: 0.09,
       fill: { color: C.card },
       line: { color: C.line, width: 1 },
-      shadow: { type: 'outer', angle: 90, blur: 10, offset: 2, opacity: 0.10, color: '9A8C7A' },
+      shadow: { type: 'outer', angle: 90, blur: 12, offset: 2, opacity: 0.14, color: 'C99A5E' },
     });
     const tagH = it.tag ? 0.34 : 0;
     if (it.tag) s.addText(it.tag, {

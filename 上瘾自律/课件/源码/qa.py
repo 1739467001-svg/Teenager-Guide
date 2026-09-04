@@ -48,6 +48,15 @@ def analyze(path):
                 if not (abs(x) < 0.05 and abs(y) < 0.05 and w >= SLIDE_W - 0.1):
                     issues.append((si, 'OUT', f'越界 x={x:.2f} y={y:.2f} w={w:.2f} h={h:.2f}'))
 
+            # 表格：估算真实高度，看有没有压到别的元素或掉出版心
+            if sh.has_table:
+                tb = sh.table
+                th = sum((r.height or 0) for r in tb.rows) / EMU_IN
+                if y + th > SLIDE_H - 0.3:
+                    issues.append((si, 'TABLE', f'表格底边 {y+th:.2f}" 超出版心（顶 {y:.2f}"，{len(tb.rows)} 行）'))
+                boxes.append((x, y, w, th, '[表格]', 12))
+                continue
+
             if not sh.has_text_frame: continue
             tf = sh.text_frame
             txt = '\n'.join(para_text(p) for p in tf.paragraphs).strip()
